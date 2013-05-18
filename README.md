@@ -1,5 +1,9 @@
 # ISPageScrollView
 
+Note: This is a sub-project of [UIKitHelper](https://github.com/tonyzonghui/UIKitHelper) git project. You may want to use UIKitHelper in your project for more UIKit utilities.
+
+---
+
 ### Description
 
 ISPageScrollView is a UIScrollView subclass optimised for huge number of pages display. It uses lazy-loading mechanism to maintain only the previous few pages and the next few pages in order to minimize the memory usage.
@@ -28,3 +32,8 @@ pageScrollView.numberOfReusableViews = 5;
 [pageScrollView displayPage:0];
 
 ```
+
+# License
+---
+UIKitHelper is available under the MIT license. See the LICENSE file for more info.
+
