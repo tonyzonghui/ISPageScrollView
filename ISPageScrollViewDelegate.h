@@ -1,8 +1,8 @@
 //
-//  ISPageScrollView.h
+//  ISPageScrollViewDelegate.h
 //
 //  Copyright (c) 2013 Zhang Zonghui
-//  Edited by Jos Kuijpers
+//  Created by Jos Kuijpers
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,29 @@
 //  THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
-#import "ISPageScrollViewDataSource.h"
-#import "ISPageScrollViewDelegate.h"
 
-@interface ISPageScrollView : UIScrollView
+@class ISPageScrollView;
 
-@property (nonatomic, weak) id<ISPageScrollViewDataSource> dataSource;
-@property (nonatomic, weak) id<ISPageScrollViewDelegate> pageDelegate;
-@property (nonatomic, assign) NSInteger numberOfReusableViews;
-@property (nonatomic, readonly) NSMutableDictionary *scrollViewAvailablePages;
+@protocol ISPageScrollViewDelegate <NSObject>
 
-- (void)displayPage:(NSInteger)pageIndex;
+@optional
+/**
+ * Fired before given view at given pageIndex is removed
+ */
+- (void)pageScrollView:(ISPageScrollView *)scrollView
+		willRemoveView:(UIView *)view
+				atPage:(NSInteger)pageIndex;
+
+/**
+ * Fired after the view at given pageIndex is removed
+ */
+- (void)pageScrollView:(ISPageScrollView *)scrollView
+   didRemoveViewAtPage:(NSInteger)pageIndex;
+
+/**
+ * Fired when the page scroll view started showing another page
+ */
+- (void)pageScrollView:(ISPageScrollView *)scrollView
+		   didShowPage:(NSInteger)pageIndex;
 
 @end

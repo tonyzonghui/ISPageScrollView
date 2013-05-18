@@ -1,8 +1,8 @@
 //
 //  ISPageScrollView.m
-//  TestInfiniteScrollView
 //
 //  Copyright (c) 2013 Zhang Zonghui
+//  Edited by Jos Kuijpers
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,6 @@
         [self setShowsHorizontalScrollIndicator:NO];
         
         _scrollViewAvailablePages = [@{} mutableCopy];
-        _numberOfPages = 0;
         _numberOfReusableViews = 0;
     }
     return self;
@@ -61,21 +60,8 @@
     [self setShowsHorizontalScrollIndicator:NO];
     
     _scrollViewAvailablePages = [@{} mutableCopy];
-    _numberOfPages = 0;
     _numberOfReusableViews = 0;    
 }
-
-#pragma mark - Accessor methods
-
-- (void)setNumberOfPages:(NSInteger)numberOfPages
-{
-    if ( numberOfPages < self.numberOfReusableViews )
-    {
-        self.numberOfReusableViews = numberOfPages;
-    }
-    _numberOfPages = numberOfPages;
-}
-
 
 #pragma mark - UIScrollViewDelegate
 
@@ -83,7 +69,7 @@
 {
     NSInteger currentPage = scrollView.contentOffset.x / scrollView.frame.size.width + _minReusablePageIndex;
     
-    [self setupScrollViewForDisplayingPage:currentPage];
+    [self setupScrollViewForDisplayingPage:currentPage animated:NO];
 }
 
 
@@ -91,21 +77,35 @@
 
 - (void)displayPage:(NSInteger)pageIndex
 {
-    [self setupScrollViewForDisplayingPage:pageIndex];
+    [self setupScrollViewForDisplayingPage:pageIndex animated:YES];
 }
 
 - (void)setupScrollViewForDisplayingPage:(NSInteger)pageIndex
+								animated:(BOOL)animated
 {
+	NSInteger numberOfPages = [_dataSource numberOfPagesForPageScrollView:self];
+	if(numberOfPages < self.numberOfReusableViews)
+		self.numberOfReusableViews = numberOfPages;
+
     NSInteger minPageIndex = MAX(0, pageIndex - (_numberOfReusableViews - 1) / 2.0);
-    NSInteger maxPageIndex = MIN(_numberOfPages, pageIndex + (_numberOfReusableViews - 1) / 2.0);
+    NSInteger maxPageIndex = MIN(numberOfPages, pageIndex + (_numberOfReusableViews - 1) / 2.0);
     
     // remove unused views
     for ( NSNumber *pageIndex in _scrollViewAvailablePages.allKeys )
     {
         if ( pageIndex.integerValue < minPageIndex || pageIndex.integerValue > maxPageIndex )
         {
+			if([_pageDelegate respondsToSelector:@selector(pageScrollView:willRemoveView:atPage:)])
+				[_pageDelegate pageScrollView:self
+							   willRemoveView:_scrollViewAvailablePages[pageIndex]
+									   atPage:pageIndex.integerValue];
+			
             [_scrollViewAvailablePages[pageIndex] removeFromSuperview];
             [_scrollViewAvailablePages removeObjectForKey:pageIndex];
+			
+			if([_pageDelegate respondsToSelector:@selector(pageScrollView:didRemoveViewAtPage:)])
+				[_pageDelegate pageScrollView:self
+						  didRemoveViewAtPage:pageIndex.integerValue];
         }
     }
     
@@ -115,7 +115,7 @@
         UIView *viewForPage = _scrollViewAvailablePages[@(i)];
         if ( viewForPage == nil )
         {
-            viewForPage = [self.dataSource viewForScrollView:self Page:i];
+            viewForPage = [self.dataSource viewForScrollView:self page:i];
             [self addSubview:viewForPage];
             [_scrollViewAvailablePages setObject:viewForPage forKey:@(i)];
         }
@@ -126,6 +126,9 @@
     self.contentOffset = CGPointMake(self.frame.size.width * (pageIndex - minPageIndex), 0);
     self.contentSize = CGSizeMake(self.frame.size.width * (maxPageIndex - minPageIndex + 1), self.frame.size.height);
     _minReusablePageIndex = minPageIndex;
+	
+	if([_pageDelegate respondsToSelector:@selector(pageScrollView:didShowPage:)])
+		[_pageDelegate pageScrollView:self didShowPage:pageIndex];
 }
 
 
