@@ -20,9 +20,9 @@ ISPageScrollView is a UIScrollView subclass optimised for huge number of pages d
 
 ### DataSource required methods
 
-**-viewForScrollView:(ISPageScrollView *)scrollView page:(NSInteger)pageIndex : Needs to return the view to use on specified page.
+**-viewForScrollView:(ISPageScrollView *)scrollView page:(NSInteger)pageIndex**: Needs to return the view to use on specified page.
 
-**-numberOfPagesForPageScrollView:(ISPageScrollView *)scrollView : Needs to return the number of pages in the scroll view.
+**-numberOfPagesForPageScrollView:(ISPageScrollView *)scrollView**: Needs to return the number of pages in the scroll view.
 
 ### Usage
 
