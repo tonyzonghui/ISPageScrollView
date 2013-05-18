@@ -1,8 +1,8 @@
 //
-//  ISPageScrollView.h
+//  ISPageScrollViewDataSource.h
 //
 //  Copyright (c) 2013 Zhang Zonghui
-//  Edited by Jos Kuijpers
+//  Created by Jos Kuijpers
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,23 @@
 //  THE SOFTWARE.
 
 #import <UIKit/UIKit.h>
-#import "ISPageScrollViewDataSource.h"
-#import "ISPageScrollViewDelegate.h"
 
-@interface ISPageScrollView : UIScrollView
+@class ISPageScrollView;
 
-@property (nonatomic, weak) id<ISPageScrollViewDataSource> dataSource;
-@property (nonatomic, weak) id<ISPageScrollViewDelegate> pageDelegate;
-@property (nonatomic, assign) NSInteger numberOfReusableViews;
-@property (nonatomic, readonly) NSMutableDictionary *scrollViewAvailablePages;
+@protocol ISPageScrollViewDataSource <NSObject>
 
-- (void)displayPage:(NSInteger)pageIndex;
+@required
+/**
+ * The view for given scroll view and page. This method is required.
+ */
+- (UIView *)viewForScrollView:(ISPageScrollView *)scrollView
+						 page:(NSInteger)pageIndex;
+
+/**
+ * The number of pages in given scroll view. This method is required.
+ * 
+ * The number of pages must be larger than the number of reusable views.
+ */
+- (NSInteger)numberOfPagesForPageScrollView:(ISPageScrollView *)scrollView;
 
 @end
