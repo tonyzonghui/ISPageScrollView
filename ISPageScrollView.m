@@ -129,6 +129,7 @@
 	
 	if([_pageDelegate respondsToSelector:@selector(pageScrollView:didShowPage:)])
 		[_pageDelegate pageScrollView:self didShowPage:pageIndex];
+    _currentPageIndex = pageIndex;
 }
 
 

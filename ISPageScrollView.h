@@ -31,6 +31,7 @@
 @property (nonatomic, weak) id<ISPageScrollViewDataSource> dataSource;
 @property (nonatomic, weak) id<ISPageScrollViewDelegate> pageDelegate;
 @property (nonatomic, assign) NSInteger numberOfReusableViews;
+@property (nonatomic, readonly) NSInteger currentPageIndex;
 @property (nonatomic, readonly) NSMutableDictionary *scrollViewAvailablePages;
 
 - (void)displayPage:(NSInteger)pageIndex;
